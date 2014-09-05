@@ -37,7 +37,7 @@ public class UserCF {
         DataModel model = new FileDataModel(new File(file));
         
         // what's EuclideanDistanceSimilarity ? difference between PearsonCorrelationSimilarity, UncenteredCosineSimilarity
-        UserSimilarity user = new EuclideanDistanceSimilarity(model);
+        UserSimilarity userSimilarity = new EuclideanDistanceSimilarity(model);
 //        new PearsonCorrelationSimilarity(model);
 //        new PearsonCorrelationSimilarity(model, Weighting.WEIGHTED);
 //        new EuclideanDistanceSimilarity(model);
@@ -45,15 +45,16 @@ public class UserCF {
 //        new SpearmanCorrelationSimilarity(model);
         new TanimotoCoefficientSimilarity(model);
         
-        NearestNUserNeighborhood neighbor = new NearestNUserNeighborhood(NEIGHBORHOOD_NUM, user, model);
+        NearestNUserNeighborhood neighbor = new NearestNUserNeighborhood(NEIGHBORHOOD_NUM, userSimilarity, model);
         
+        // userId = 1
         long length = neighbor.getUserNeighborhood(1).length;
         for (int i = 0; i < length; i++) {
             long neighborhood = neighbor.getUserNeighborhood(1)[i];
-            System.out.println("neighbor = " + neighborhood);
+            System.out.println("neighbor = " + neighborhood + "; Similarity = " + userSimilarity.userSimilarity(1, neighborhood));
         }
         // create recommender engine
-        Recommender r = new GenericUserBasedRecommender(model, neighbor, user);
+        Recommender r = new GenericUserBasedRecommender(model, neighbor, userSimilarity);
         // recommender two items for user1 
         //r.recommend(1, 2); (userId, how many items)
         
